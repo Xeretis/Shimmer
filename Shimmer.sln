@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shimmer", "Shimmer\Shimmer.csproj", "{9A91149B-00F2-43E2-BBBA-DA95FAB17C16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C4C67752-D8FD-437F-80F4-B4A81D88556D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CE3B7DA2-BD2C-4EE7-8CAF-45C9CB8E9ACA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shimmer.Tests", "Shimmer.Tests\Shimmer.Tests.csproj", "{169AEE23-1754-4E2D-A8E8-6EDE7298BC22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A91149B-00F2-43E2-BBBA-DA95FAB17C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A91149B-00F2-43E2-BBBA-DA95FAB17C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A91149B-00F2-43E2-BBBA-DA95FAB17C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A91149B-00F2-43E2-BBBA-DA95FAB17C16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{169AEE23-1754-4E2D-A8E8-6EDE7298BC22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{169AEE23-1754-4E2D-A8E8-6EDE7298BC22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{169AEE23-1754-4E2D-A8E8-6EDE7298BC22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{169AEE23-1754-4E2D-A8E8-6EDE7298BC22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9A91149B-00F2-43E2-BBBA-DA95FAB17C16} = {C4C67752-D8FD-437F-80F4-B4A81D88556D}
+		{169AEE23-1754-4E2D-A8E8-6EDE7298BC22} = {CE3B7DA2-BD2C-4EE7-8CAF-45C9CB8E9ACA}
+	EndGlobalSection
+EndGlobal
