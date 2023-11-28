@@ -4,8 +4,14 @@ using Shimmer.Core;
 
 namespace Shimmer.Services;
 
+/// <summary>
+///     The class used to create shimmer jobs.
+/// </summary>
+/// <param name="jobManager">The job manager (same as the one in the jobs).</param>
+/// <param name="schedulerFactory">The Quartz scheduler factory.</param>
 public class ShimmerJobFactory(IShimmerJobManager jobManager, ISchedulerFactory schedulerFactory) : IShimmerJobFactory
 {
+    /// <inheritdoc />
     public async Task<IShimmerJobBuilder<T>> CreateAsync<T>(CancellationToken cancellationToken = default)
         where T : ShimmerJob
     {
@@ -15,6 +21,7 @@ public class ShimmerJobFactory(IShimmerJobManager jobManager, ISchedulerFactory 
         return shimmerJobBuilder;
     }
 
+    /// <inheritdoc />
     public async Task<IShimmerJobBuilder<T, TData>> CreateAsync<T, TData>(CancellationToken cancellationToken = default)
         where T : ShimmerJob<TData> where TData : class
     {
@@ -24,6 +31,7 @@ public class ShimmerJobFactory(IShimmerJobManager jobManager, ISchedulerFactory 
         return shimmerJobBuilder;
     }
 
+    /// <inheritdoc />
     public async Task<IShimmerJobTreeBuilder<T>> CreateTreeAsync<T>(CancellationToken cancellationToken = default)
         where T : ShimmerJob
     {
@@ -33,6 +41,7 @@ public class ShimmerJobFactory(IShimmerJobManager jobManager, ISchedulerFactory 
         return shimmerJobChainBuilder;
     }
 
+    /// <inheritdoc />
     public async Task<IShimmerJobTreeBuilder<T, TData>> CreateTreeAsync<T, TData>(
         CancellationToken cancellationToken = default)
         where T : ShimmerJob<TData> where TData : class

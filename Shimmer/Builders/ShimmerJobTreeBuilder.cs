@@ -5,6 +5,13 @@ using Shimmer.Services;
 
 namespace Shimmer.Builders;
 
+/// <summary>
+///     The builder used to configure and build jobs that depend on each other.
+/// </summary>
+/// <param name="jobManager">The job manager (same as the one used by the jobs).</param>
+/// <param name="scheduler">The Quartz scheduler to use.</param>
+/// <typeparam name="T">The type of the job.</typeparam>
+/// <typeparam name="TData">The type of the job data.</typeparam>
 public class ShimmerJobTreeBuilder<T, TData>
     (IShimmerJobManager jobManager, IScheduler scheduler) : IShimmerJobTreeBuilder<T, TData>
     where T : ShimmerJob<TData> where TData : class
@@ -19,6 +26,7 @@ public class ShimmerJobTreeBuilder<T, TData>
 
     public JobKey JobKey { get; set; } = new(Guid.NewGuid().ToString());
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Data(TData data)
     {
         JobBuilder.UsingJobData("data", JsonSerializer.Serialize(data));
@@ -27,6 +35,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Group(string group)
     {
         JobKey.Group = group;
@@ -34,6 +43,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Name(string name)
     {
         JobKey.Name = name;
@@ -41,6 +51,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Description(string description)
     {
         JobBuilder.WithDescription(description);
@@ -48,6 +59,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Concurrent(bool concurrent = true)
     {
         JobBuilder.DisallowConcurrentExecution(!concurrent);
@@ -55,6 +67,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> RequestRecovery(bool request = true)
     {
         JobBuilder.RequestRecovery(request);
@@ -62,6 +75,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Durable(bool store = true)
     {
         JobBuilder.StoreDurably(store);
@@ -69,6 +83,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Priority(int priority)
     {
         TriggerBuilder.WithPriority(priority);
@@ -76,6 +91,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> Schedule(IScheduleBuilder scheduleBuilder)
     {
         TriggerBuilder.WithSchedule(scheduleBuilder);
@@ -84,6 +100,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> SimpleSchedule(Action<SimpleScheduleBuilder> configure)
     {
         TriggerBuilder.WithSimpleSchedule(configure);
@@ -92,6 +109,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> CronSchedule(string cronExpression)
     {
         TriggerBuilder.WithCronSchedule(cronExpression);
@@ -100,6 +118,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> StartAt(DateTimeOffset startTimeOffset)
     {
         TriggerBuilder.StartAt(startTimeOffset);
@@ -108,6 +127,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData> EndAt(DateTimeOffset? endTimeOffset)
     {
         TriggerBuilder.EndAt(endTimeOffset);
@@ -115,7 +135,9 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
-    public IShimmerJobTreeBuilder<T, TData> AddChainedJob<TNew>(Action<IShimmerJobTreeBuilder<TNew>>? configure = null)
+    /// <inheritdoc />
+    public IShimmerJobTreeBuilder<T, TData> AddDependentJob<TNew>(
+        Action<IShimmerJobTreeBuilder<TNew>>? configure = null)
         where TNew : ShimmerJob
     {
         JobBuilder.WithIdentity(JobKey);
@@ -157,7 +179,8 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
-    public IShimmerJobTreeBuilder<T, TData> AddChainedJob<TNew, TNewData>(
+    /// <inheritdoc />
+    public IShimmerJobTreeBuilder<T, TData> AddDependentJob<TNew, TNewData>(
         Action<IShimmerJobTreeBuilder<TNew, TNewData>> configure)
         where TNew : ShimmerJob<TNewData> where TNewData : class
     {
@@ -204,7 +227,8 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
-    public IShimmerJobTreeBuilder<T, TData> AddChainedJob<TNew>(IShimmerJobTreeBuilder<TNew> jobBuilder)
+    /// <inheritdoc />
+    public IShimmerJobTreeBuilder<T, TData> AddDependentJob<TNew>(IShimmerJobTreeBuilder<TNew> jobBuilder)
         where TNew : ShimmerJob
     {
         JobBuilder.WithIdentity(JobKey);
@@ -242,8 +266,9 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T, TData>
-        AddChainedJob<TNew, TNewData>(IShimmerJobTreeBuilder<TNew, TNewData> jobBuilder)
+        AddDependentJob<TNew, TNewData>(IShimmerJobTreeBuilder<TNew, TNewData> jobBuilder)
         where TNew : ShimmerJob<TNewData> where TNewData : class
     {
         JobBuilder.WithIdentity(JobKey);
@@ -285,6 +310,7 @@ public class ShimmerJobTreeBuilder<T, TData>
         return this;
     }
 
+    /// <inheritdoc />
     public Task<DateTimeOffset> FireAsync(CancellationToken cancellationToken = default)
     {
         if (!CheckDataProvided())
@@ -315,6 +341,12 @@ public class ShimmerJobTreeBuilder<T, TData>
     }
 }
 
+/// <summary>
+///     The builder used to configure and build jobs that depend on each other.
+/// </summary>
+/// <param name="jobManager">The job manager (same as the one used by the jobs).</param>
+/// <param name="scheduler">The Quartz scheduler to use.</param>
+/// <typeparam name="T">The type of the job.</typeparam>
 public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler scheduler) : IShimmerJobTreeBuilder<T>
     where T : ShimmerJob
 {
@@ -326,6 +358,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
 
     public JobKey JobKey { get; set; } = new(Guid.NewGuid().ToString());
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Group(string group)
     {
         JobKey.Group = group;
@@ -333,6 +366,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Name(string name)
     {
         JobKey.Name = name;
@@ -340,6 +374,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Description(string description)
     {
         JobBuilder.WithDescription(description);
@@ -347,6 +382,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Concurrent(bool concurrent = true)
     {
         JobBuilder.DisallowConcurrentExecution(!concurrent);
@@ -354,6 +390,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> RequestRecovery(bool request = true)
     {
         JobBuilder.RequestRecovery(request);
@@ -361,6 +398,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Durable(bool store = true)
     {
         JobBuilder.StoreDurably(store);
@@ -368,6 +406,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Priority(int priority)
     {
         TriggerBuilder.WithPriority(priority);
@@ -375,6 +414,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> Schedule(IScheduleBuilder scheduleBuilder)
     {
         TriggerBuilder.WithSchedule(scheduleBuilder);
@@ -383,6 +423,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> SimpleSchedule(Action<SimpleScheduleBuilder> configure)
     {
         TriggerBuilder.WithSimpleSchedule(configure);
@@ -391,6 +432,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> CronSchedule(string cronExpression)
     {
         TriggerBuilder.WithCronSchedule(cronExpression);
@@ -399,6 +441,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> StartAt(DateTimeOffset startTimeOffset)
     {
         TriggerBuilder.StartAt(startTimeOffset);
@@ -407,6 +450,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> EndAt(DateTimeOffset? endTimeOffset)
     {
         TriggerBuilder.EndAt(endTimeOffset);
@@ -414,6 +458,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> AddDependentJob<TNew>(Action<IShimmerJobTreeBuilder<TNew>>? configure = null)
         where TNew : ShimmerJob
     {
@@ -456,6 +501,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> AddDependentJob<TNew, TNewData>(
         Action<IShimmerJobTreeBuilder<TNew, TNewData>> configure)
         where TNew : ShimmerJob<TNewData> where TNewData : class
@@ -503,6 +549,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T> AddDependentJob<TNew>(IShimmerJobTreeBuilder<TNew> jobBuilder)
         where TNew : ShimmerJob
     {
@@ -541,6 +588,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public IShimmerJobTreeBuilder<T>
         AddDependentJob<TNew, TNewData>(IShimmerJobTreeBuilder<TNew, TNewData> jobBuilder)
         where TNew : ShimmerJob<TNewData> where TNewData : class
@@ -584,6 +632,7 @@ public class ShimmerJobTreeBuilder<T>(IShimmerJobManager jobManager, IScheduler 
         return this;
     }
 
+    /// <inheritdoc />
     public Task<DateTimeOffset> FireAsync(CancellationToken cancellationToken = default)
     {
         JobBuilder.WithIdentity(JobKey);

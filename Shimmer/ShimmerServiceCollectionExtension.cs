@@ -8,6 +8,12 @@ namespace Shimmer;
 
 public static class ShimmerServiceCollectionExtension
 {
+    /// <summary>
+    ///     Adds Quartz and Shimmer to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="quartzConfigurator">The quartz configuration.</param>
+    /// <returns>The service collection.</returns>
     public static IServiceCollection AddShimmer(this IServiceCollection services,
         Action<IServiceCollectionQuartzConfigurator>? quartzConfigurator = null)
     {
@@ -19,6 +25,13 @@ public static class ShimmerServiceCollectionExtension
         return services;
     }
 
+    /// <summary>
+    ///     Automatically discovers and adds all jobs in the assembly to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="assembly">The assembly to scan.</param>
+    /// <param name="lifetime">The default lifetime of jobs.</param>
+    /// <returns>The service collection.</returns>
     public static IServiceCollection DiscoverJobs(this IServiceCollection services, Assembly assembly,
         ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
@@ -51,6 +64,13 @@ public static class ShimmerServiceCollectionExtension
         return services;
     }
 
+    /// <summary>
+    ///     Adds a job to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="lifetime">The job lifetime.</param>
+    /// <typeparam name="T">The type of the job.</typeparam>
+    /// <typeparam name="TData">The type of the job data.</typeparam>
     public static void AddShimmerJob<T, TData>(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped) where T : ShimmerJob<TData> where TData : class
     {
@@ -64,6 +84,12 @@ public static class ShimmerServiceCollectionExtension
         }, lifetime));
     }
 
+    /// <summary>
+    ///     Adds a job to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="lifetime">The job lifetime.</param>
+    /// <typeparam name="T">The type of the job.</typeparam>
     public static void AddShimmerJob<T>(this IServiceCollection services,
         ServiceLifetime lifetime = ServiceLifetime.Scoped) where T : ShimmerJob
     {

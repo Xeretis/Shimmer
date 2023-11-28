@@ -121,7 +121,7 @@ public class ShimmerJobTreeBuilderTest
         var job3 = await shimmerJobFactory.CreateTreeAsync<JobTreeBuilderTestJob3, JobTreeBuilderTestData>();
 
         job3.Data(new JobTreeBuilderTestData())
-            .AddChainedJob<JobTreeBuilderTestJob1>(j => j.AddDependentJob<JobTreeBuilderTestJob2>(_ => { }));
+            .AddDependentJob<JobTreeBuilderTestJob1>(j => j.AddDependentJob<JobTreeBuilderTestJob2>(_ => { }));
 
         await job3.FireAsync();
 
