@@ -1,0 +1,25 @@
+name: publish to nuget
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish Shimmer on version change
+        id: publish_shimmer_nuget
+        uses: brandedoutcast/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: Shimmer/Shimmer.csproj
+          PACKAGE_NAME: Xeretis.Shimmer
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      - name: Publish Shimmer.AspNetCore on version change
+        id: publish_shimmer_nuget
+        uses: brandedoutcast/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: Shimmer.AspNetCore/Shimmer.AspNetCore.csproj
+          PACKAGE_NAME: Xeretis.Shimmer.AspNetCore
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}

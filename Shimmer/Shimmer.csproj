@@ -5,9 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageId>Xeretis.Shimmer</PackageId>
-        <Title>Shimmer - A simple job scheduler based on Quartz.NET for</Title>
+        <Version>1.0.0</Version>
+        <Title>Shimmer - A simple job scheduler based on Quartz.NET</Title>
         <Authors>Xeretis</Authors>
         <Description>Shimmer is a wrapper around Quartz.NET, designed to make background job scheduling simpler and more "fluid".</Description>
+        <PackageProjectUrl>https://github.com/Xeretis/Shimmer</PackageProjectUrl>
+        <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Xeretis/Shimmer</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Jobs Quartz.Net Scheduling</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
