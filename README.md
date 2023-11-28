@@ -55,7 +55,7 @@ public class SampleJobWithData : ShimmerJob<SampleData>
 There are two ways to register jobs with Shimmer. The first way is to register them manually.
 
 ```csharp
-services.AddShimmer() // Adds both Quartz and Shimmer services 
+services.AddShimmer(); // Adds both Quartz and Shimmer services 
 services.AddShimmerJob<SampleJob>(ServiceLifetime.Singleton); // Registers SampleJob as a singleton (by default, jobs are registered as scoped)
 services.AddShimmerJob<SampleJobWithData, SampleData>();
 ```
@@ -63,7 +63,7 @@ services.AddShimmerJob<SampleJobWithData, SampleData>();
 The second way is to register them automatically by scanning assemblies.
 
 ```csharp
-services.AddShimmer() // Adds both Quartz and Shimmer services
+services.AddShimmer(); // Adds both Quartz and Shimmer services
 services.DiscoverJobs(Assembly.GetExecutingAssembly()); // Discovers jobs in the executing assembly and adds them to the service collection
 ```
 
@@ -163,7 +163,7 @@ public class SampleController : Controller
         jobTree.Name("Sample Job Tree")
                 .Description("This is a sample job tree")
                 .CronSchedule("0 0 12 * * ?")
-                .AddDependentJob<SampleJob2>() // SampleJob2 will run after SampleJob finishes (every time)
+                .AddDependentJob<SampleJob2>(); // SampleJob2 will run after SampleJob finishes (every time)
 
         // Run job tree in the background
         await jobTree.FireAsync();
@@ -196,7 +196,7 @@ public class SampleController : Controller
                 .CronSchedule("0 0 12 * * ?")
                 .AddDependentJob<SampleJob2>() // SampleJob2 will run after SampleJob finishes (every time)
                 .AddDependentJob<SampleJobWithData, SampleData>(j => j.Data(new SampleData())) // SampleJobWithData will run after SampleJob finishes (every time), here we must provide an action to configure the job data
-                .AddDependentJob<SampleJob3>(j => j.AddDependentJob<SampleJob4>()) // We can also add more jobs to the tree with an action
+                .AddDependentJob<SampleJob3>(j => j.AddDependentJob<SampleJob4>()); // We can also add more jobs to the tree with an action
                 
         // Run job tree in the background
         await jobTree.FireAsync();
@@ -230,7 +230,7 @@ public class SampleController : Controller
         // Configure job tree
         jobTree.Name("Sample Job Tree")
                 .Description("This is a sample job tree")
-                .AddDependentJob(dependentJob) // SampleJob2 will run 5 minutes after the current time after SampleJob finishes
+                .AddDependentJob(dependentJob); // SampleJob2 will run 5 minutes after the current time after SampleJob finishes
                 
         // Run job tree in the background
         await jobTree.FireAsync();
