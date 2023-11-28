@@ -6,41 +6,51 @@ using Shimmer.Core;
 
 namespace Shimmer.Tests;
 
-class TestData1 {}
-
-class TestData2 {}
-
-class TestJob1 : ShimmerJob<TestData1>
+public class DITestData1
 {
-    protected override Task Process(TestData1 data, IJobExecutionContext context)
+}
+
+public class DITestData2
+{
+}
+
+public class DITestJob1 : ShimmerJob<DITestData1>
+{
+    protected override Task Process(DITestData1 data, IJobExecutionContext context)
     {
         throw new NotImplementedException();
     }
 }
 
-class TestJob2 : ShimmerJob<TestData2>
+public class DITestJob2 : ShimmerJob<DITestData2>
 {
-    protected override Task Process(TestData2 data, IJobExecutionContext context)
+    protected override Task Process(DITestData2 data, IJobExecutionContext context)
     {
         throw new NotImplementedException();
     }
 }
 
-interface ITestService
+public interface IDITestService
 {
-    
 }
 
-class TestService : ITestService
+public class DITestService : IDITestService
 {
-    
 }
 
-class TestJob3(ITestService testService) : ShimmerJob<TestData1>
+internal class DITestJob3(IDITestService idiTestService) : ShimmerJob<DITestData1>
 {
-    public readonly ITestService testService = testService;
+    public readonly IDITestService DITestService = idiTestService;
 
-    protected override Task Process(TestData1 data, IJobExecutionContext context)
+    protected override Task Process(DITestData1 data, IJobExecutionContext context)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+internal class DITestJob4 : ShimmerJob
+{
+    protected override Task Process(IJobExecutionContext context)
     {
         throw new NotImplementedException();
     }
@@ -52,58 +62,63 @@ public class DependencyInjectionTest
     public void DiscoversJobs()
     {
         var services = new ServiceCollection();
-        
-        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(TestJob1))!);
-        services.AddTransient<ITestService, TestService>();
-        
+
+        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(DITestJob1))!);
+        services.AddTransient<IDITestService, DITestService>();
+
         var provider = services.BuildServiceProvider();
 
-        provider.GetRequiredService<TestJob1>().Should().BeOfType<TestJob1>();
-        provider.GetRequiredService<TestJob2>().Should().BeOfType<TestJob2>();
-        provider.GetRequiredService<TestJob3>().Should().BeOfType<TestJob3>();
+        provider.GetRequiredService<DITestJob1>().Should().BeOfType<DITestJob1>();
+        provider.GetRequiredService<DITestJob2>().Should().BeOfType<DITestJob2>();
+        provider.GetRequiredService<DITestJob3>().Should().BeOfType<DITestJob3>();
+        provider.GetRequiredService<DITestJob4>().Should().BeOfType<DITestJob4>();
     }
-    
+
     [Fact]
     public void DiscoversJobsWithLifetime()
     {
         var services = new ServiceCollection();
-        
-        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(TestJob1))!, ServiceLifetime.Singleton);
 
-        var descriptors = services.GetEnumerator();
-        
+        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(DITestJob1))!, ServiceLifetime.Singleton);
+
+        using var descriptors = services.GetEnumerator();
+
         while (descriptors.MoveNext())
         {
             var currentDescriptor = descriptors.Current;
-            
-            if (currentDescriptor.ServiceType == typeof(TestJob1))
+
+            if (currentDescriptor.ServiceType == typeof(DITestJob1))
                 currentDescriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
-            else if (currentDescriptor.ServiceType == typeof(TestJob2))
+            else if (currentDescriptor.ServiceType == typeof(DITestJob2))
                 currentDescriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
-            else if (currentDescriptor.ServiceType == typeof(TestJob3))
+            else if (currentDescriptor.ServiceType == typeof(DITestJob3))
+                currentDescriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
+            else if (currentDescriptor.ServiceType == typeof(DITestJob4))
                 currentDescriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
         }
     }
-    
+
     [Fact]
     public void InjectsJobDependencies()
     {
         var services = new ServiceCollection();
-        
-        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(TestJob1))!);
-        services.AddTransient<ITestService, TestService>();
-        
+
+        services.AddShimmer().DiscoverJobs(Assembly.GetAssembly(typeof(DITestJob1))!);
+        services.AddTransient<IDITestService, DITestService>();
+
         var provider = services.BuildServiceProvider();
 
-        var job1 = provider.GetRequiredService<TestJob1>();
+        var job1 = provider.GetRequiredService<DITestJob1>();
 
         job1.shimmerJobManager.Should().NotBeNull();
-        job1.schedulerFactory.Should().NotBeNull();
-        
-        var job3 = provider.GetRequiredService<TestJob3>();
-        
+
+        var job3 = provider.GetRequiredService<DITestJob3>();
+
         job3.shimmerJobManager.Should().NotBeNull();
-        job3.schedulerFactory.Should().NotBeNull();
-        job3.testService.Should().NotBeNull();
+        job3.DITestService.Should().NotBeNull();
+
+        var job4 = provider.GetRequiredService<DITestJob4>();
+
+        job4.shimmerJobManager.Should().NotBeNull();
     }
 }

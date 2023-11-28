@@ -1,0 +1,6 @@
+@Shimmer.WebApiExample_HostAddress = http://localhost:5102
+
+GET {{Shimmer.WebApiExample_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
