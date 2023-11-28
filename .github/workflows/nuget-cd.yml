@@ -17,7 +17,7 @@ jobs:
           PACKAGE_NAME: Xeretis.Shimmer
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
       - name: Publish Shimmer.AspNetCore on version change
-        id: publish_shimmer_nuget
+        id: publish_shimmer_aspnetcore_nuget
         uses: brandedoutcast/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: Shimmer.AspNetCore/Shimmer.AspNetCore.csproj
